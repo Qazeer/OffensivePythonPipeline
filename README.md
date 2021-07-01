@@ -3,11 +3,11 @@
 ### Description
 
 This repository contains static standalone binaries for Windows and Linux (both
-x64) of [dirkjanm's
-CVE-2020-1472 POC](https://github.com/dirkjanm/CVE-2020-1472) Python scripts:
-`cve-2020-1472-exploit.exe` and `restorepassword.exe`. All credit goes to Tom
-Tervoort for the [original research](https://www.secura.com/blog/zero-logon)
-and Dirk-jan Mollema for the Python scripts.
+x64) for the following Python tools:
+  - [dirkjanm's CVE-2020-1472](https://github.com/dirkjanm/CVE-2020-1472) 
+    Python scripts `cve-2020-1472-exploit.py` and `restorepassword.py`.
+  - [cube0x0's CVE-2021-1675](https://github.com/cube0x0/CVE-2021-1675) 
+    Python script `CVE-2021-1675.py`.
 
 The build process is heavily based on work from [ropnop's
 impacket_static_binaries](https://github.com/ropnop/impacket_static_binaries).
@@ -17,30 +17,36 @@ image](https://github.com/cdrx/docker-pyinstaller). The Linux binaries are
 built in Ubuntu 12.04 running Glibc 2.15 and should thus be compatible with
 any version of Glibc newer than 2.15.
 
-The main motivation behind this work is to have tooling to restore the DC
-machine account password from Windows operating systems.
-
 ### Build the binaries yourself
 
 The binaries can be build directly from sources using the provided `Makefile`
 after retrieving the `cdrx/pyinstaller-windows` / `cdrx/pyinstaller-linux`
-docker images. The newly compiled binaries will be placed in the `tmp_build`
-folder.
+docker images. 
+
+The newly compiled binaries will be placed in the `binaries` folder.
 
 ```
-# If necessary, to refresh the impacket and CVE-2020-1472 repositories cloned in tmp_build
+# If necessary, to refresh the impacket and others GitHub repositories cloned in tmp_build.
 make clean
 
-# Windows
+# Help message listing the supported Makefile targets. 
+make help
+
+# All binaries for both Windows and Linux.
+docker pull cdrx/pyinstaller-windows
+docker pull cdrx/pyinstaller-linux
+make all
+
+# All Windows binaries.
 docker pull cdrx/pyinstaller-windows
 make windows
 
-# Linux
+# All Linux binaries.
 docker pull cdrx/pyinstaller-linux
 make linux
 ```
 
-### Usage
+### Usage example of dirkjanm's CVE-2020-1472 exploit
 
 ```
 # Sets an empty password for the targeted DC machine account.
