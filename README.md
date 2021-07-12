@@ -100,11 +100,6 @@ clean:                    Clean build artefacts by deleting the build folder.
 
 ### Known issues
 
-  - `CrackMapExec`'s `lsassy` module is non functional on Linux / Windows x64
-    (error message `The  'lsassy' distribution was not found and is required
-    by the application`).  
-    [Issue previously opened `CrackMapExec`-side](https://github.com/byt3bl33d3r/CrackMapExec/issues/456).
-
   - Pressing the Enter key may sometimes be necessary to finish the execution
     of the `CrackMapExec` Windows binary ¯\\_(ツ)_/¯.
 
@@ -132,6 +127,14 @@ please feel free to open an issue.
     Studio`.) The requirement is automatically removed from `pywerview` and
     `CrackMapExec` in the build scripts.  
     [Issue opened `pywerview`-side](https://github.com/the-useless-one/pywerview/issues/44).
+
+  - `CrackMapExec`'s `lsassy` module is non functional on Linux / Windows x64
+    (error message `The  'lsassy' distribution was not found and is required
+    by the application`) using the repository spec file. A custom `PyInstaller` 
+    hook for `lsassy` is added through the build scripts and the spec file is
+    automatically modified accordingly.   
+    [Issue previously opened `CrackMapExec`-side](https://github.com/byt3bl33d3r/CrackMapExec/issues/456).
+
 
 ### Tools TODO
   - [Responder-Windows](https://github.com/lgandx/Responder-Windows)

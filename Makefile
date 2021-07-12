@@ -1,8 +1,8 @@
 .PHONY: help all windows windows_zerologon windows_printnightmare linux linux_zerologon linux_printnightmare clean
 THIS_FILE := $(lastword $(MAKEFILE_LIST))
 
-PROJECT_PATH_LINUX=/mnt/c/Users/User/Documents/dirkjanm_CVE-2020-1472_static_binaries
-PROJECT_PATH_WINDOWS=C:\Users\User\Documents\dirkjanm_CVE-2020-1472_static_binaries
+PROJECT_PATH_LINUX=<PROJECT_PATH_LINUX>
+PROJECT_PATH_WINDOWS=<PROJECT_PATH_WINDOWS>
 BUILD_FOLDER=tmp_build
 OUTPUT_FOLDER=binaries
 

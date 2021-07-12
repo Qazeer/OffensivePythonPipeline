@@ -34,7 +34,7 @@ datas, binaries, hiddenimports = collect_all('lsassy')" > /CrackMapExec/hooks/ho
 # Build the standalone crackmapexec binary after adding the hidden import for impacket.ldap.
 # May become unnecessary if issue https://github.com/byt3bl33d3r/CrackMapExec/issues/475 is fixed.
 sed "s/'impacket.tds'/'impacket.ldap.ldap', 'impacket.tds'/" crackmapexec.spec > crackmapexec-updated.spec
-sed -i "s/hookspath=\[]/hookspath=\['\/CrackMapExec\/hooks\/']/" crackmapexec-updated.spec
+sed -i "s/hookspath=\[]/hookspath=\['hooks']/" crackmapexec-updated.spec
 pyinstaller --onefile --clean -F crackmapexec-updated.spec
 
 # Export the compiled binaries

@@ -43,12 +43,12 @@ Write-Output  '# -*- coding:utf-8 -*-
 
 from PyInstaller.utils.hooks import collect_all
 
-datas, binaries, hiddenimports = collect_all("lsassy")' | Out-File -Force -Encoding Default -FilePath C:\CrackMapExec\hooks\hook-lsassy.py
+datas, binaries, hiddenimports = collect_all("lsassy")' | Out-File -NoNewline -Force -Encoding Default -FilePath C:\CrackMapExec\hooks\hook-lsassy.py
 
 # Build the standalone crackmapexec binary after adding the hidden import for impacket.ldap.
 # May become unnecessary if issue https://github.com/byt3bl33d3r/CrackMapExec/issues/475 is fixed.
-(Get-Content crackmapexec.spec -Raw) -Replace "'impacket.tds'","'impacket.ldap.ldap', 'impacket.tds'" | Out-File -Encoding Default crackmapexec-updated.spec
-(Get-Content crackmapexec-updated.spec -Raw) -Replace "hookspath=\[]","hookspath=['C:\CrackMapExec\hooks\']" | Out-File -Encoding Default crackmapexec-updated.spec
+(Get-Content crackmapexec.spec -Raw) -Replace "'impacket.tds'","'impacket.ldap.ldap', 'impacket.tds'" | Out-File -NoNewline -Encoding Default crackmapexec-updated.spec
+(Get-Content crackmapexec-updated.spec -Raw) -Replace "hookspath=\[]","hookspath=['hooks']" | Out-File -NoNewline -Encoding Default crackmapexec-updated.spec
 
 C:\Python\python.exe -m PyInstaller --onefile --clean -F crackmapexec-updated.spec
 
