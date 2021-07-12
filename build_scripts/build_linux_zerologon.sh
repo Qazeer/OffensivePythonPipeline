@@ -14,13 +14,13 @@ cd "${ROOT}"
 python -m pip install --upgrade pip
 
 # Install impacket
-cd /zerologon/impacket-SecureAuthCorp/
+cd /host_build/impacket-SecureAuthCorp/
 pip install .
 
 # Create standalone executables
-pyinstaller --specpath /tmp/spec --workpath /tmp/build --distpath /tmp/out --clean -F /zerologon/CVE-2020-1472/cve-2020-1472-exploit.py
-pyinstaller --specpath /tmp/spec --workpath /tmp/build --distpath /tmp/out --clean -F /zerologon/CVE-2020-1472/restorepassword.py
+pyinstaller --specpath /tmp/spec --workpath /tmp/build --distpath /tmp/out --clean -F /host_build/CVE-2020-1472/cve-2020-1472-exploit.py
+pyinstaller --specpath /tmp/spec --workpath /tmp/build --distpath /tmp/out --clean -F /host_build/CVE-2020-1472/restorepassword.py
 
 # Export the compiled binaries
-mv /tmp/out/cve-2020-1472-exploit /zerologon/cve-2020-1472-exploit_linux
-mv /tmp/out/restorepassword /zerologon/restorepassword_linux
+mv /tmp/out/cve-2020-1472-exploit /host_build/cve-2020-1472-exploit_linux
+mv /tmp/out/restorepassword /host_build/restorepassword_linux

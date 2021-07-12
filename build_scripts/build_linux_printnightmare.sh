@@ -13,12 +13,12 @@ cd "${ROOT}"
 
 python -m pip install --upgrade pip
 
-# Install cube0x0's impacket
-cd /printnightmare/impacket-cube0x0
+# Install impacket
+cd /host_build/impacket-SecureAuthCorp/
 pip install .
 
 # Create standalone executables
-pyinstaller --specpath /tmp/spec --workpath /tmp/build --distpath /tmp/out --clean -F /printnightmare/CVE-2021-1675/CVE-2021-1675.py
+pyinstaller --specpath /tmp/spec --workpath /tmp/build --distpath /tmp/out --clean -F /host_build/CVE-2021-1675/CVE-2021-1675.py
 
 # Export the compiled binaries
-mv /tmp/out/CVE-2021-1675 /printnightmare/CVE-2021-1675_linux
+mv /tmp/out/CVE-2021-1675 /host_build/CVE-2021-1675_linux
