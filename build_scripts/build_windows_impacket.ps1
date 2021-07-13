@@ -16,17 +16,17 @@ If (!(C:\Python\python.exe -m pip list | Select-String -Quiet -Pattern "pyinstal
     C:\Python\python.exe -m pip install pyinstaller
 }
 
-# Install impacket (if isn't already installed).
-If (!(C:\Python\python.exe -m pip list | Select-String -Quiet -Pattern "impacket")) {
-    Set-Location C:\host_build\impacket-SecureAuthCorp
-    C:\Python\python.exe -m pip install .
-    C:\Python\python.exe setup.py egg_info
-}
+# Install impacket (update if it is already installed to make sure the version is compatible with the examples).
+Set-Location C:\host_build\impacket-SecureAuthCorp
+C:\Python\python.exe -m pip install .
+C:\Python\python.exe setup.py install
+
+C:\Python\python.exe -m pip install pyreadline
 
 # Create standalone binaries.
 Get-ChildItem "C:\host_build\impacket-SecureAuthCorp\examples" -Filter *.py | 
 Foreach-Object {
-    C:\Python\python.exe -m PyInstaller --specpath $env:temp\spec --workpath $env:temp\build --distpath $env:temp\out --clean -F $_.FullName
+    C:\Python\python.exe -m PyInstaller --hidden-import=impacket.examples.utils --specpath $env:temp\spec --workpath $env:temp\build --distpath $env:temp\out --clean -F $_.FullName
 }
 
 # Export the compiled binaries.

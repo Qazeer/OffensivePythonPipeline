@@ -11,11 +11,12 @@ set -euo pipefail
 ROOT=$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )
 cd "${ROOT}"
 
-python -m pip install --upgrade pip
+python -m pip install --no-cache-dir --upgrade pip
+pip install --no-cache-dir --upgrade setuptools
 
 # Install pypykatz requirements.
 cp -r /host_build/pypykatz /pypykatz && cd /pypykatz
-pip install minidump minikerberos aiowinreg msldap winacl
+pip install --upgrade --no-cache-dir minidump minikerberos aiowinreg aiosmb msldap winacl
 python setup.py install
 
 # Create standalone executables

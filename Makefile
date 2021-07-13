@@ -6,7 +6,7 @@ PROJECT_PATH_WINDOWS=<PROJECT_PATH_WINDOWS>
 BUILD_FOLDER=tmp_build
 OUTPUT_FOLDER=binaries
 
-DOCKER_CLI_PATH="C:\Program Files\Docker\Docker\DockerCli.exe"
+DOCKER_CLI_PATH=C:\Program Files\Docker\Docker\DockerCli.exe
 
 DOCKER_WINDOWS_CONTAINER=OffensivePythonPipelineWindows
 DOCKER_WINDOWS_IMAGE=mcr.microsoft.com/dotnet/framework/sdk
@@ -52,17 +52,17 @@ _impacket_download:
 	if [ ! -d "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/impacket-SecureAuthCorp" ]; then unzip -q $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/impacket-SecureAuthCorp.zip -d $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER) && mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/impacket-master $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/impacket-SecureAuthCorp; fi
 
 
-# Swith the Docker engine to Windows. 
+# Swith the Docker engine to Windows.
 _docker_switch_windows:
 	echo "Switching to Docker Windows engine..."
-	@powershell.exe -c '& $(DOCKER_CLI_PATH) -SwitchWindowsEngine'
-	@powershell.exe -c 'timeout 10'
+	@powershell.exe -c "& '$(DOCKER_CLI_PATH)' -SwitchWindowsEngine"
+	@powershell.exe -c "timeout 10"
 
-# Swith the Docker engine to Linux. 
+# Swith the Docker engine to Linux.
 _docker_switch_linux:
 	echo "Switching to Docker Linux engine..."
-	@powershell.exe -c '& $(DOCKER_CLI_PATH) -SwitchLinuxEngine'
-	@powershell.exe -c 'timeout 10'
+	@powershell.exe -c "& '$(DOCKER_CLI_PATH)' -SwitchLinuxEngine"
+	@powershell.exe -c "timeout 10"
 
 # Start a detached container for consecutive Windows builds (in order to avoid multiple time-consuming installations).
 _docker_windows_create:
@@ -95,7 +95,7 @@ _docker_linux_run:
 	if [ "$$(docker image ls $(DOCKER_LINUX_IMAGE)-tmp | grep "$(DOCKER_LINUX_IMAGE)-tmp")" ]; then echo "Executing command using already commited image..." && $(DOCKER_LINUX_EXEC); else echo "Starting new container..." && $(DOCKER_LINUX_RUN_SINGLE); fi
 
 all:                     ## Compiles all binaries for both Windows and Linux.
-all: windows linux 
+all: windows linux
 
 windows:                 ## Compiles all Windows binaries.
 windows: _docker_switch_windows _docker_windows_create windows_crackmapexec windows_lsassy windows_zerologon windows_printnightmare windows_pypykatz windows_impacket _docker_windows_rm
@@ -129,7 +129,7 @@ windows_lsassy:          ## Compiles Windows binary for Hackndo's lsassy.
 	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)
 	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/lsassy_windows.exe $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
 
-windows_printnightmare:  ## Compiles Windows binary for cube0x0's CVE-2021-1675.  
+windows_printnightmare:  ## Compiles Windows binary for cube0x0's CVE-2021-1675.
 	@$(MAKE) -f $(THIS_FILE) _python_download _impacket_download
 	cp $(PROJECT_PATH_LINUX)/build_scripts/build_windows_printnightmare.ps1 $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_WINDOWS_ENTRYPOINT_FILE)
 	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/CVE-2021-1675.zip" ]; then wget -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/CVE-2021-1675.zip $(PRINTNIGHTMARE_URL); fi
@@ -138,7 +138,7 @@ windows_printnightmare:  ## Compiles Windows binary for cube0x0's CVE-2021-1675.
 	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)
 	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/CVE-2021-1675_windows.exe $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
 
-windows_pypykatz:        ## Compiles Windows binary for skelsec's pypykatz.  
+windows_pypykatz:        ## Compiles Windows binary for skelsec's pypykatz.
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
 	@$(MAKE) -f $(THIS_FILE) _python_download
 	cp $(PROJECT_PATH_LINUX)/build_scripts/build_windows_pypykatz.ps1 $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_WINDOWS_ENTRYPOINT_FILE)
@@ -218,7 +218,7 @@ linux_impacket:          ## Compiles Linux binaries for SecureAuthCorp's impacke
 	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/impacket
 	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/impacket/*_linux $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/impacket/
 
-linux_lsassy:            ## Compiles Linux binary for Hackndo's lsassy. 
+linux_lsassy:            ## Compiles Linux binary for Hackndo's lsassy.
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
 	@$(MAKE) -f $(THIS_FILE) _impacket_download
 	cp $(PROJECT_PATH_LINUX)/build_scripts/build_linux_lsassy.sh $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_LINUX_ENTRYPOINT_FILE)
@@ -240,7 +240,7 @@ linux_printnightmare:    ## Compiles Linux binary for cube0x0's CVE-2021-1675.
 	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)
 	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/CVE-2021-1675_linux $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
 
-linux_pypykatz:          ## Compiles Linux binary for skelsec's pypykatz.  
+linux_pypykatz:          ## Compiles Linux binary for skelsec's pypykatz.
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
 	cp $(PROJECT_PATH_LINUX)/build_scripts/build_linux_pypykatz.sh $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_LINUX_ENTRYPOINT_FILE)
 	chmod +x $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_LINUX_ENTRYPOINT_FILE)
@@ -286,3 +286,9 @@ linux_zerologon:         ## Compiles Linux binaries for dirkjanm's CVE-2020-1472
 
 clean:                   ## Clean build artefacts by deleting the build folder.
 	rm -rf $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
+
+test:                    ## Executes all the Windows / Linux binaries (for a manual review of errors use make test 1>/dev/null).
+	echo "Executing all Windows binaries"
+	@powershell.exe -c 'Get-ChildItem -Recurse -Path "$(PROJECT_PATH_WINDOWS)\$(OUTPUT_FOLDER)\*.exe" | % { Write-Host $$_.FullName; & "$$_" }'
+	echo "Executing all Linux binaries"
+	cd $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER) && find . \( -iname "*_linux" ! -iname "sniffer_linux" \) -exec echo {} \; -exec {} \;

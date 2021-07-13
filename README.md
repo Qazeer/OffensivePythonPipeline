@@ -95,6 +95,8 @@ linux_responder:          Compiles Linux binaries for Responder.
 linux_smbmap:             Compiles Linux binary for ShawnDEvans' smbmap.
 linux_zerologon:          Compiles Linux binaries for dirkjanm's CVE-2020-1472.
 
+test:                     Executes all the Windows / Linux binaries
+                            (for a manual review of errors use make test 1>/dev/null).
 clean:                    Clean build artefacts by deleting the build folder.
 ```
 
@@ -111,6 +113,14 @@ clean:                    Clean build artefacts by deleting the build folder.
   - `SMBMap` is non-functional as a Windows standalone binary (endless
     printing of the usage helper).
 
+  - `impacket`'s `nmapAnswerMachine` is missing the `uncrc32` module (Linux /
+    Windows) and `impacket`'s `sniff` / `split` are missing the `pcapy`
+    module (Linux / Windows).
+
+  - `impacket`'s `ntlmrelayx` / `smbrelayx` / `sniffer` standalone binaries
+    fail with error `WinError 10013` on Windows and `NotImplementedError:
+    Can't perform this operation for unregistered loader type` on Linux.
+   
 More comprehensive tests of the binaries are underway, if you find a bug
 please feel free to open an issue.
 
@@ -124,13 +134,13 @@ please feel free to open an issue.
   - `CrackMapExec` requires the unmaintained `pycrypto` module as it is
     required by `pywerview`. `pycrypto` causes issues for standalone build on
     Windows due to incompatibility with recent `Build Tools for Visual
-    Studio`.) The requirement is automatically removed from `pywerview` and
+    Studio`). The requirement is automatically removed from `pywerview` and
     `CrackMapExec` in the build scripts.  
     [Issue opened `pywerview`-side](https://github.com/the-useless-one/pywerview/issues/44).
 
   - `CrackMapExec`'s `lsassy` module is non functional on Linux / Windows x64
     (error message `The  'lsassy' distribution was not found and is required
-    by the application`) using the repository spec file. A custom `PyInstaller` 
+    by the application`) using the repository spec file. A custom `PyInstaller`
     hook for `lsassy` is added through the build scripts and the spec file is
     automatically modified accordingly.   
     [Issue previously opened `CrackMapExec`-side](https://github.com/byt3bl33d3r/CrackMapExec/issues/456).

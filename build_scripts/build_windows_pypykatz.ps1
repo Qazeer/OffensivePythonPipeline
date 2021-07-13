@@ -19,7 +19,7 @@ If (!(C:\Python\python.exe -m pip list | Select-String -Quiet -Pattern "pyinstal
 # Install pypykatz requirements.
 Copy-Item -Recurse -Path C:\host_build\pypykatz -Destination C:\pypykatz
 Set-Location C:\pypykatz
-C:\Python\python.exe -m pip install minidump minikerberos aiowinreg msldap winacl
+C:\Python\python.exe -m pip install --upgrade --no-cache-dir minidump minikerberos aiowinreg aiosmb msldap winacl
 C:\Python\python.exe setup.py install
 
 # Create standalone the binary.
