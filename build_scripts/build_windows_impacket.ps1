@@ -13,7 +13,7 @@ If (!(Test-Path -Path C:\Python\python.exe)) {
 # Install PyInstaller (if isn't already installed).
 If (!(C:\Python\python.exe -m pip list | Select-String -Quiet -Pattern "pyinstaller")) {
     Write-Host "Installing PyInstaller..."
-    C:\Python\python.exe -m pip install pyinstaller
+    C:\Python\python.exe -m pip install pyinstaller==4.3
 }
 
 # Install impacket (update if it is already installed to make sure the version is compatible with the examples).
