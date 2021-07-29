@@ -1,8 +1,8 @@
 .PHONY: help all windows windows_zerologon windows_printnightmare linux linux_zerologon linux_printnightmare clean
 THIS_FILE := $(lastword $(MAKEFILE_LIST))
 
-PROJECT_PATH_LINUX=<PROJECT_PATH_LINUX>
-PROJECT_PATH_WINDOWS=<PROJECT_PATH_WINDOWS>
+PROJECT_PATH_LINUX=/mnt/c/Users/User/Documents/OffensivePythonPipeline
+PROJECT_PATH_WINDOWS=C:\Users\User\Documents\OffensivePythonPipeline
 BUILD_FOLDER=tmp_build
 OUTPUT_FOLDER=binaries
 
@@ -27,10 +27,13 @@ DOCKER_LINUX_DELETE=docker rm --force $(DOCKER_LINUX_CONTAINER)
 DOCKER_LINUX_EXEC=docker run --name $(DOCKER_LINUX_CONTAINER) -v "${PROJECT_PATH_LINUX}/$(BUILD_FOLDER):$(DOCKER_LINUX_BUILD_FOLDER)" -w "$(DOCKER_LINUX_BUILD_FOLDER)" $(DOCKER_LINUX_IMAGE)-tmp $(DOCKER_LINUX_BUILD_FOLDER)/$(DOCKER_LINUX_ENTRYPOINT_FILE) && docker commit $(DOCKER_LINUX_CONTAINER) $(DOCKER_LINUX_IMAGE)-tmp && docker rm $(DOCKER_LINUX_CONTAINER)
 
 PYTHON_INSTALLER_URL="https://www.python.org/ftp/python/3.8.9/python-3.8.9.exe"
+MS_CPP_REDIS_x86_URL="http://download.microsoft.com/download/5/B/C/5BC5DBB3-652D-4DCE-B14A-475AB85EEF6E/vcredist_x86.exe"
+MS_CPP_REDIS_x64_URL="https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x64.exe"
 
 CRACKMAPEXEC_URL="https://github.com/byt3bl33d3r/CrackMapExec/archive/master.zip"
 ENUM4LINUXNG_URL="https://github.com/cddmp/enum4linux-ng/archive/master.zip"
 IMPACKET_URL="https://github.com/SecureAuthCorp/impacket/archive/master.zip"
+LAZAGNE_URL="https://github.com/AlessandroZ/LaZagne/archive/master.zip"
 LSASSY_URL="https://github.com/Hackndo/lsassy/archive/master.zip"
 PRINTNIGHTMARE_URL="https://github.com/cube0x0/CVE-2021-1675/archive/main.zip"
 PYPYKATZ_URL="https://github.com/skelsec/pypykatz/archive/master.zip"
@@ -45,6 +48,11 @@ help:                    ## Show this help.
 _python_download:
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
 	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/python.exe" ]; then wget -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/python.exe $(PYTHON_INSTALLER_URL); fi 
+
+_ms_cpp_redis_download:
+	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
+	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/VC_redist.x64.exe" ]; then wget -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/VC_redist.x64.exe $(MS_CPP_REDIS_x64_URL); fi 
+	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/VC_redist.x86.exe" ]; then wget -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/VC_redist.x86.exe $(MS_CPP_REDIS_x86_URL); fi 
 
 _impacket_download:
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
@@ -98,7 +106,7 @@ all:                     ## Compiles all binaries for both Windows and Linux.
 all: windows linux
 
 windows:                 ## Compiles all Windows binaries.
-windows: _docker_switch_windows _docker_windows_create windows_crackmapexec windows_lsassy windows_zerologon windows_printnightmare windows_pypykatz windows_impacket _docker_windows_rm
+windows: _docker_switch_windows _docker_windows_create windows_crackmapexec windows_lsassy windows_lazagne windows_zerologon windows_printnightmare windows_pypykatz windows_impacket _docker_windows_rm
 
 windows_crackmapexec:    ## Compiles Windows binary for byt3bl33d3r's CrackMapExec.
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
@@ -118,6 +126,16 @@ windows_impacket:        ## Compiles Windows binaries for SecureAuthCorp's impac
 	@$(MAKE) -f $(THIS_FILE) _docker_windows_run
 	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/impacket
 	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/impacket/*_windows.exe $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/impacket/
+
+windows_lazagne:         ## Compiles Windows binary for AlessandroZ's LaZagne.
+	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
+	@$(MAKE) -f $(THIS_FILE) _python_download _ms_cpp_redis_download
+	cp $(PROJECT_PATH_LINUX)/build_scripts/build_windows_lazagne.ps1 $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_WINDOWS_ENTRYPOINT_FILE)
+	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/lazagne.zip" ]; then wget -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/lazagne.zip $(LAZAGNE_URL); fi
+	if [ ! -d "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/lazagne" ]; then unzip -q $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/lazagne.zip -d $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER) && mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/lazagne-master $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/lazagne; fi
+	@$(MAKE) -f $(THIS_FILE) _docker_windows_run
+	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)
+	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/lazagne_windows.exe $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
 
 windows_lsassy:          ## Compiles Windows binary for Hackndo's lsassy.
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
@@ -184,7 +202,7 @@ windows_zerologon:       ## Compiles Windows binaries for dirkjanm's CVE-2020-14
 	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/restorepassword_windows.exe $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
 
 linux:                   ## Compiles all Linux binaries.
-linux: _docker_switch_linux _docker_linux_create linux_crackmapexec linux_lsassy linux_zerologon linux_printnightmare linux_enum4linuxng linux_pypykatz linux_smbmap linux_responder linux_impacket _docker_linux_rm
+linux: _docker_switch_linux _docker_linux_create linux_crackmapexec linux_lsassy linux_lazagne linux_zerologon linux_printnightmare linux_enum4linuxng linux_pypykatz linux_smbmap linux_responder linux_impacket _docker_linux_rm
 
 linux_crackmapexec:      ## Compiles Linux binary for byt3bl33d3r's CrackMapExec.
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
@@ -217,6 +235,16 @@ linux_impacket:          ## Compiles Linux binaries for SecureAuthCorp's impacke
 	@$(MAKE) -f $(THIS_FILE) _docker_linux_run
 	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/impacket
 	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/impacket/*_linux $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/impacket/
+
+linux_lazagne:           ## Compiles Linux binary for AlessandroZ's LaZagne.
+	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
+	cp $(PROJECT_PATH_LINUX)/build_scripts/build_linux_lazagne.sh $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_LINUX_ENTRYPOINT_FILE)
+	chmod +x $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_LINUX_ENTRYPOINT_FILE)
+	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/lazagne.zip" ]; then wget -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/lazagne.zip $(LAZAGNE_URL); fi
+	if [ ! -d "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/lazagne" ]; then unzip -q $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/lazagne.zip -d $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER) && mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/lazagne-master $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/lazagne; fi
+	@$(MAKE) -f $(THIS_FILE) _docker_linux_run
+	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)
+	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/lazagne_linux $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
 
 linux_lsassy:            ## Compiles Linux binary for Hackndo's lsassy.
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)

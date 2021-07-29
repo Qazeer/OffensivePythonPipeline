@@ -10,6 +10,7 @@ offensive tools:
 | [cube0x0's CVE-2021-1675 (PrintNightmare)](https://github.com/cube0x0/CVE-2021-1675) | Linux / Windows x64 | `CVE-2021-1675_linux` <br/> `CVE-2021-1675_windows.exe` |
 | [enum4linux-ng](https://github.com/cddmp/enum4linux-ng) | Linux x64 (with the `samba tools` installed) | `enum4linuxng_linux` |
 | [impacket](https://github.com/SecureAuthCorp/impacket) | Linux / Windows x64 | Current (as of 2021-07-11) impacket's examples scripts |
+| [LaZagne](https://github.com/AlessandroZ/LaZagne) | Linux / Windows x64 | `lazagne_linux` <br/> `lazagne_windows.exe` |
 | [lsassy](https://github.com/Hackndo/lsassy) | Linux / Windows x64 | `lsassy_linux` <br/> `lsassy_windows.exe` |
 | [pypykatz](https://github.com/skelsec/pypykatz) | Linux / Windows x64 | `pypykatz_linux` <br/> `pypykatz_windows.exe` |
 | [Responder](https://github.com/lgandx/Responder) | Linux x64 (experimental) | `Responder_linux` <br/> `MultiRelay_linux` |
