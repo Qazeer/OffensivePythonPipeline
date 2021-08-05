@@ -1,8 +1,10 @@
 .PHONY: help all windows windows_zerologon windows_printnightmare linux linux_zerologon linux_printnightmare clean
 THIS_FILE := $(lastword $(MAKEFILE_LIST))
 
-PROJECT_PATH_LINUX=/mnt/c/Users/User/Documents/OffensivePythonPipeline
-PROJECT_PATH_WINDOWS=C:\Users\User\Documents\OffensivePythonPipeline
+# Should both be updated to match your environment.
+PROJECT_PATH_LINUX=/mnt/c/Users/User/OffensivePythonPipeline
+PROJECT_PATH_WINDOWS=C:\Users\User\OffensivePythonPipeline
+
 BUILD_FOLDER=tmp_build
 OUTPUT_FOLDER=binaries
 
@@ -33,6 +35,7 @@ MS_CPP_REDIS_x64_URL="https://download.microsoft.com/download/1/6/5/165255E7-101
 CRACKMAPEXEC_URL="https://github.com/byt3bl33d3r/CrackMapExec/archive/master.zip"
 ENUM4LINUXNG_URL="https://github.com/cddmp/enum4linux-ng/archive/master.zip"
 IMPACKET_URL="https://github.com/SecureAuthCorp/impacket/archive/master.zip"
+ITWASALLADREAM_URL="https://github.com/byt3bl33d3r/ItWasAllADream/archive/master.zip"
 LAZAGNE_URL="https://github.com/AlessandroZ/LaZagne/archive/master.zip"
 LSASSY_URL="https://github.com/Hackndo/lsassy/archive/master.zip"
 PRINTNIGHTMARE_URL="https://github.com/cube0x0/CVE-2021-1675/archive/main.zip"
@@ -106,7 +109,7 @@ all:                     ## Compiles all binaries for both Windows and Linux.
 all: windows linux
 
 windows:                 ## Compiles all Windows binaries.
-windows: _docker_switch_windows _docker_windows_create windows_crackmapexec windows_lsassy windows_lazagne windows_zerologon windows_printnightmare windows_pypykatz windows_impacket _docker_windows_rm
+windows: _docker_switch_windows _docker_windows_create windows_crackmapexec windows_lsassy windows_lazagne windows_zerologon windows_printnightmare windows_itwasalladream windows_pypykatz windows_impacket _docker_windows_rm
 
 windows_crackmapexec:    ## Compiles Windows binary for byt3bl33d3r's CrackMapExec.
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
@@ -126,6 +129,15 @@ windows_impacket:        ## Compiles Windows binaries for SecureAuthCorp's impac
 	@$(MAKE) -f $(THIS_FILE) _docker_windows_run
 	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/impacket
 	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/impacket/*_windows.exe $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/impacket/
+
+windows_itwasalladream:  ## Compiles Windows binary for byt3bl33d3r's ItWasAllADream.
+	@$(MAKE) -f $(THIS_FILE) _python_download _impacket_download
+	cp $(PROJECT_PATH_LINUX)/build_scripts/build_windows_itwasalladream.ps1 $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_WINDOWS_ENTRYPOINT_FILE)
+	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/ItWasAllADream.zip" ]; then wget -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/ItWasAllADream.zip $(ITWASALLADREAM_URL); fi
+	if [ ! -d "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/ItWasAllADream" ]; then unzip -q $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/ItWasAllADream.zip -d $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER) && mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/ItWasAllADream-master $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/ItWasAllADream; fi
+	@$(MAKE) -f $(THIS_FILE) _docker_windows_run
+	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)
+	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/ItWasAllADream_windows.exe $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
 
 windows_lazagne:         ## Compiles Windows binary for AlessandroZ's LaZagne.
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
@@ -202,7 +214,7 @@ windows_zerologon:       ## Compiles Windows binaries for dirkjanm's CVE-2020-14
 	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/restorepassword_windows.exe $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
 
 linux:                   ## Compiles all Linux binaries.
-linux: _docker_switch_linux _docker_linux_create linux_crackmapexec linux_lsassy linux_lazagne linux_zerologon linux_printnightmare linux_enum4linuxng linux_pypykatz linux_smbmap linux_responder linux_impacket _docker_linux_rm
+linux: _docker_switch_linux _docker_linux_create linux_crackmapexec linux_lsassy linux_lazagne linux_zerologon linux_printnightmare linux_itwasalladream linux_enum4linuxng linux_pypykatz linux_smbmap linux_responder linux_impacket _docker_linux_rm
 
 linux_crackmapexec:      ## Compiles Linux binary for byt3bl33d3r's CrackMapExec.
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
@@ -235,6 +247,17 @@ linux_impacket:          ## Compiles Linux binaries for SecureAuthCorp's impacke
 	@$(MAKE) -f $(THIS_FILE) _docker_linux_run
 	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/impacket
 	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/impacket/*_linux $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/impacket/
+
+linux_itwasalladream:    ## Compiles Linux binary for byt3bl33d3r's ItWasAllADream. 
+	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
+	@$(MAKE) -f $(THIS_FILE) _impacket_download
+	cp $(PROJECT_PATH_LINUX)/build_scripts/build_linux_itwasalladream.sh $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_LINUX_ENTRYPOINT_FILE)
+	chmod +x $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_LINUX_ENTRYPOINT_FILE)
+	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/ItWasAllADream.zip" ]; then wget -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/ItWasAllADream.zip $(ITWASALLADREAM_URL); fi
+	if [ ! -d "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/ItWasAllADream" ]; then unzip -q $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/ItWasAllADream.zip -d $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER) && mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/ItWasAllADream-master $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/ItWasAllADream; fi
+	@$(MAKE) -f $(THIS_FILE) _docker_linux_run
+	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)
+	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/ItWasAllADream_linux $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
 
 linux_lazagne:           ## Compiles Linux binary for AlessandroZ's LaZagne.
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)

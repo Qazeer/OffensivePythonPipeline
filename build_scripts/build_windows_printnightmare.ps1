@@ -16,12 +16,13 @@ If (!(C:\Python\python.exe -m pip list | Select-String -Quiet -Pattern "pyinstal
     C:\Python\python.exe -m pip install pyinstaller==4.3
 }
 
-# Install impacket (if isn't already installed).
-If (!(C:\Python\python.exe -m pip list | Select-String -Quiet -Pattern "impacket")) {
-    Set-Location C:\host_build\impacket-SecureAuthCorp
-    C:\Python\python.exe -m pip install .
-    C:\Python\python.exe setup.py egg_info
+# Force install of the last impacket version (to make sure the version used has the necessary MS-PAR implementation ).
+If ((C:\Python\python.exe -m pip list | Select-String -Quiet -Pattern "impacket")) {
+    C:\Python\python.exe -m pip uninstall impacket
 }
+Set-Location C:\host_build\impacket-SecureAuthCorp
+C:\Python\python.exe -m pip install .
+C:\Python\python.exe setup.py egg_info
 
 # Create standalone the binary.
 C:\Python\python.exe -m PyInstaller --specpath $env:temp\spec --workpath $env:temp\build --distpath $env:temp\out --clean -F C:\host_build\CVE-2021-1675\CVE-2021-1675.py

@@ -13,7 +13,8 @@ cd "${ROOT}"
 
 python -m pip install --upgrade pip
 
-# Install impacket
+# Force install of the last impacket version (to make sure the version used has the necessary MS-PAR implementation ).
+pip uninstall impacket
 cd /host_build/impacket-SecureAuthCorp/
 pip install .
 
