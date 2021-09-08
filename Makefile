@@ -1,4 +1,4 @@
-.PHONY: help all windows windows_zerologon windows_printnightmare linux linux_zerologon linux_printnightmare clean
+.PHONY: all windows windows_crackmapexec windows_impacket windows_itwasalladream windows_lazagne windows_lsassy windows_printnightmare windows_pypykatz windows_zerologon linux linux_crackmapexec linux_enum4linuxng linux_impacket linux_itwasalladream linux_lazagne linux_lsassy linux_printnightmare linux_pypykatz linux_responder linux_smbmap linux_zerologon clean test
 THIS_FILE := $(lastword $(MAKEFILE_LIST))
 
 # Should both be updated to match your environment.
