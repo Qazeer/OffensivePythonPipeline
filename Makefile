@@ -1,4 +1,4 @@
-.PHONY: help all windows windows_zerologon windows_printnightmare linux linux_zerologon linux_printnightmare clean
+.PHONY: all windows windows_certipy windows_crackmapexec windows_gmsadumper windows_impacket windows_itwasalladream windows_lazagne windows_lsassy windows_pachine windows_printnightmare windows_pypykatz windows_pywhisker windows_zerologon linux linux_certipy linux_crackmapexec linux_enum4linuxng linux_gmsadumper linux_impacket linux_itwasalladream linux_lazagne linux_lsassy linux_pachine linux_printnightmare linux_pypykatz linux_pywhisker linux_responder linux_smbmap linux_zerologon clean test
 THIS_FILE := $(lastword $(MAKEFILE_LIST))
 
 # Should both be updated to match your environment.
@@ -29,20 +29,25 @@ DOCKER_LINUX_DELETE=docker rm --force $(DOCKER_LINUX_CONTAINER)
 DOCKER_LINUX_EXEC=docker run --name $(DOCKER_LINUX_CONTAINER) -v "${PROJECT_PATH_LINUX}/$(BUILD_FOLDER):$(DOCKER_LINUX_BUILD_FOLDER)" -w "$(DOCKER_LINUX_BUILD_FOLDER)" $(DOCKER_LINUX_IMAGE)-tmp $(DOCKER_LINUX_BUILD_FOLDER)/$(DOCKER_LINUX_ENTRYPOINT_FILE) && docker commit $(DOCKER_LINUX_CONTAINER) $(DOCKER_LINUX_IMAGE)-tmp && docker rm $(DOCKER_LINUX_CONTAINER)
 
 PYTHON_INSTALLER_URL="https://www.python.org/ftp/python/3.8.9/python-3.8.9.exe"
+PYTHON_INSTALLER_LAST_URL="https://www.python.org/ftp/python/3.9.9/python-3.9.9.exe"
 MS_CPP_REDIS_x86_URL="http://download.microsoft.com/download/5/B/C/5BC5DBB3-652D-4DCE-B14A-475AB85EEF6E/vcredist_x86.exe"
 MS_CPP_REDIS_x64_URL="https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x64.exe"
 
+CERTIPY_URL="https://github.com/ly4k/Certipy/archive/main.zip"
 CRACKMAPEXEC_URL="https://github.com/byt3bl33d3r/CrackMapExec/archive/master.zip"
 ENUM4LINUXNG_URL="https://github.com/cddmp/enum4linux-ng/archive/master.zip"
+GMSADUMPER_URL="https://github.com/micahvandeusen/gMSADumper/archive/main.zip"
 IMPACKET_URL="https://github.com/SecureAuthCorp/impacket/archive/master.zip"
 ITWASALLADREAM_URL="https://github.com/byt3bl33d3r/ItWasAllADream/archive/master.zip"
 LAZAGNE_URL="https://github.com/AlessandroZ/LaZagne/archive/master.zip"
 LSASSY_URL="https://github.com/Hackndo/lsassy/archive/master.zip"
+PACHINE_URL="https://github.com/ly4k/Pachine/archive/main.zip"
 PRINTNIGHTMARE_URL="https://github.com/cube0x0/CVE-2021-1675/archive/main.zip"
 PYPYKATZ_URL="https://github.com/skelsec/pypykatz/archive/master.zip"
 PYWERVIEW_URL="https://github.com/the-useless-one/pywerview/archive/master.zip"
 RESPONDER_URL="https://github.com/lgandx/Responder/archive/master.zip"
 SMBMAP_URL="https://github.com/ShawnDEvans/smbmap/archive/master.zip"
+PYWHISKER_URL="https://github.com/ShutdownRepo/pywhisker/archive/main.zip"
 ZEROLOGON_URL="https://github.com/dirkjanm/CVE-2020-1472/archive/master.zip"
 
 help:                    ## Show this help.
@@ -51,6 +56,10 @@ help:                    ## Show this help.
 _python_download:
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
 	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/python.exe" ]; then wget -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/python.exe $(PYTHON_INSTALLER_URL); fi 
+
+_python_last_download:
+	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
+	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/python_last.exe" ]; then wget -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/python_last.exe $(PYTHON_INSTALLER_LAST_URL); fi 
 
 _ms_cpp_redis_download:
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
@@ -109,7 +118,16 @@ all:                     ## Compiles all binaries for both Windows and Linux.
 all: windows linux
 
 windows:                 ## Compiles all Windows binaries.
-windows: _docker_switch_windows _docker_windows_create windows_crackmapexec windows_lsassy windows_lazagne windows_zerologon windows_printnightmare windows_itwasalladream windows_pypykatz windows_impacket _docker_windows_rm
+windows: _docker_switch_windows _docker_windows_create windows_crackmapexec windows_gmsadumper windows_lsassy windows_lazagne windows_zerologon windows_printnightmare windows_pachine windows_pywhisker windows_itwasalladream windows_pypykatz windows_impacket windows_certipy _docker_windows_rm
+
+windows_certipy:         ## Compiles Windows binary for ly4k's Certipy.
+	@$(MAKE) -f $(THIS_FILE) _python_last_download _impacket_download
+	cp $(PROJECT_PATH_LINUX)/build_scripts/build_windows_certipy.ps1 $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_WINDOWS_ENTRYPOINT_FILE)
+	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/Certipy.zip" ]; then wget -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/Certipy.zip $(CERTIPY_URL); fi
+	if [ ! -d "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/Certipy" ]; then unzip -q $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/Certipy.zip -d $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER) && mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/Certipy-main $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/Certipy; fi
+	@$(MAKE) -f $(THIS_FILE) _docker_windows_run
+	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)
+	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/certipy_windows.exe $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
 
 windows_crackmapexec:    ## Compiles Windows binary for byt3bl33d3r's CrackMapExec.
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
@@ -121,6 +139,15 @@ windows_crackmapexec:    ## Compiles Windows binary for byt3bl33d3r's CrackMapEx
 	@$(MAKE) -f $(THIS_FILE) _docker_windows_run
 	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)
 	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/crackmapexec_windows.exe $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
+
+windows_gmsadumper:      ## Compiles Windows binary for micahvandeusen's gMSADumper.
+	@$(MAKE) -f $(THIS_FILE) _python_download _impacket_download
+	cp $(PROJECT_PATH_LINUX)/build_scripts/build_windows_gmsadumper.ps1 $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_WINDOWS_ENTRYPOINT_FILE)
+	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/gMSADumper.zip" ]; then wget -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/gMSADumper.zip $(GMSADUMPER_URL); fi
+	if [ ! -d "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/gMSADumper" ]; then unzip -q $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/gMSADumper.zip -d $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER) && mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/gMSADumper-main $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/gMSADumper; fi
+	@$(MAKE) -f $(THIS_FILE) _docker_windows_run
+	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)
+	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/gMSADumper_windows.exe $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
 
 windows_impacket:        ## Compiles Windows binaries for SecureAuthCorp's impacket examples.
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
@@ -159,6 +186,15 @@ windows_lsassy:          ## Compiles Windows binary for Hackndo's lsassy.
 	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)
 	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/lsassy_windows.exe $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
 
+windows_pachine:         ## Compiles Windows binary for ly4k's Pachine.
+	@$(MAKE) -f $(THIS_FILE) _python_download _impacket_download
+	cp $(PROJECT_PATH_LINUX)/build_scripts/build_windows_pachine.ps1 $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_WINDOWS_ENTRYPOINT_FILE)
+	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/Pachine.zip" ]; then wget -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/Pachine.zip $(PACHINE_URL); fi
+	if [ ! -d "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/Pachine" ]; then unzip -q $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/Pachine.zip -d $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER) && mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/Pachine-main $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/Pachine; fi
+	@$(MAKE) -f $(THIS_FILE) _docker_windows_run
+	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)
+	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/pachine_windows.exe $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
+
 windows_printnightmare:  ## Compiles Windows binary for cube0x0's CVE-2021-1675.
 	@$(MAKE) -f $(THIS_FILE) _python_download _impacket_download
 	cp $(PROJECT_PATH_LINUX)/build_scripts/build_windows_printnightmare.ps1 $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_WINDOWS_ENTRYPOINT_FILE)
@@ -177,6 +213,15 @@ windows_pypykatz:        ## Compiles Windows binary for skelsec's pypykatz.
 	@$(MAKE) -f $(THIS_FILE) _docker_windows_run
 	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)
 	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/pypykatz_windows.exe $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
+
+windows_pywhisker:       ## Compiles Windows binary for ShutdownRepo's pywhisker.
+	@$(MAKE) -f $(THIS_FILE) _python_download _impacket_download
+	cp $(PROJECT_PATH_LINUX)/build_scripts/build_windows_pywhisker.ps1 $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_WINDOWS_ENTRYPOINT_FILE)
+	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/pywhisker.zip" ]; then wget -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/pywhisker.zip $(PYWHISKER_URL); fi
+	if [ ! -d "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/pywhisker" ]; then unzip -q $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/pywhisker.zip -d $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER) && mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/pywhisker-main $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/pywhisker; fi
+	@$(MAKE) -f $(THIS_FILE) _docker_windows_run
+	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)
+	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/pywhisker_windows.exe $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
 
 # ! Not functional ! Compiles Windows binaries for Responder.
 windows_responder:
@@ -214,7 +259,18 @@ windows_zerologon:       ## Compiles Windows binaries for dirkjanm's CVE-2020-14
 	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/restorepassword_windows.exe $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
 
 linux:                   ## Compiles all Linux binaries.
-linux: _docker_switch_linux _docker_linux_create linux_crackmapexec linux_lsassy linux_lazagne linux_zerologon linux_printnightmare linux_itwasalladream linux_enum4linuxng linux_pypykatz linux_smbmap linux_responder linux_impacket _docker_linux_rm
+linux: _docker_switch_linux _docker_linux_create linux_crackmapexec linux_gmsadumper linux_lsassy linux_lazagne linux_zerologon linux_pachine linux_printnightmare linux_pywhisker linux_itwasalladream linux_enum4linuxng linux_pypykatz linux_smbmap linux_responder linux_impacket linux_certipy _docker_linux_rm
+
+linux_certipy:           ## Compiles Linux binary for ly4k's Certipy.
+	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
+	@$(MAKE) -f $(THIS_FILE) _impacket_download
+	cp $(PROJECT_PATH_LINUX)/build_scripts/build_linux_certipy.sh $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_LINUX_ENTRYPOINT_FILE)
+	chmod +x $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_LINUX_ENTRYPOINT_FILE)
+	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/Certipy.zip" ]; then wget -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/Certipy.zip $(CERTIPY_URL); fi
+	if [ ! -d "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/Certipy" ]; then unzip -q $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/Certipy.zip -d $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER) && mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/Certipy-main $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/Certipy; fi
+	@$(MAKE) -f $(THIS_FILE) _docker_linux_run
+	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)
+	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/certipy_linux $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
 
 linux_crackmapexec:      ## Compiles Linux binary for byt3bl33d3r's CrackMapExec.
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
@@ -227,6 +283,17 @@ linux_crackmapexec:      ## Compiles Linux binary for byt3bl33d3r's CrackMapExec
 	@$(MAKE) -f $(THIS_FILE) _docker_linux_run
 	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)
 	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/crackmapexec_linux $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
+
+linux_gmsadumper:        ## Compiles Linux binary for micahvandeusen's gMSADumper.
+	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
+	@$(MAKE) -f $(THIS_FILE) _impacket_download
+	cp $(PROJECT_PATH_LINUX)/build_scripts/build_linux_gmsadumper.sh $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_LINUX_ENTRYPOINT_FILE)
+	chmod +x $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_LINUX_ENTRYPOINT_FILE)
+	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/gMSADumper.zip" ]; then wget -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/gMSADumper.zip $(GMSADUMPER_URL); fi
+	if [ ! -d "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/gMSADumper" ]; then unzip -q $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/gMSADumper.zip -d $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER) && mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/gMSADumper-main $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/gMSADumper; fi
+	@$(MAKE) -f $(THIS_FILE) _docker_linux_run
+	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)
+	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/gMSADumper_linux $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
 
 linux_enum4linuxng:      ## !! Still depends on nmblookup / net / rpcclient / smbclient !! Compiles Linux binary for cddmp's enum4linux-ng.
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
@@ -280,6 +347,17 @@ linux_lsassy:            ## Compiles Linux binary for Hackndo's lsassy.
 	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)
 	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/lsassy_linux $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
 
+linux_pachine:           ## Compiles Linux binary for ly4k's Pachine.
+	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
+	@$(MAKE) -f $(THIS_FILE) _impacket_download
+	cp $(PROJECT_PATH_LINUX)/build_scripts/build_linux_pachine.sh $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_LINUX_ENTRYPOINT_FILE)
+	chmod +x $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_LINUX_ENTRYPOINT_FILE)
+	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/Pachine.zip" ]; then wget -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/Pachine.zip $(PACHINE_URL); fi
+	if [ ! -d "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/Pachine" ]; then unzip -q $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/Pachine.zip -d $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER) && mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/Pachine-main $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/Pachine; fi
+	@$(MAKE) -f $(THIS_FILE) _docker_linux_run
+	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)
+	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/pachine_linux $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
+
 linux_printnightmare:    ## Compiles Linux binary for cube0x0's CVE-2021-1675. 
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
 	@$(MAKE) -f $(THIS_FILE) _impacket_download
@@ -300,6 +378,17 @@ linux_pypykatz:          ## Compiles Linux binary for skelsec's pypykatz.
 	@$(MAKE) -f $(THIS_FILE) _docker_linux_run
 	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)
 	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/pypykatz_linux $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
+
+linux_pywhisker:         ## Compiles Linux binary for ShutdownRepo's pywhisker.
+	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
+	@$(MAKE) -f $(THIS_FILE) _impacket_download
+	cp $(PROJECT_PATH_LINUX)/build_scripts/build_linux_pywhisker.sh $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_LINUX_ENTRYPOINT_FILE)
+	chmod +x $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_LINUX_ENTRYPOINT_FILE)
+	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/pywhisker.zip" ]; then wget -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/pywhisker.zip $(PYWHISKER_URL); fi
+	if [ ! -d "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/pywhisker" ]; then unzip -q $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/pywhisker.zip -d $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER) && mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/pywhisker-main $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/pywhisker; fi
+	@$(MAKE) -f $(THIS_FILE) _docker_linux_run
+	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)
+	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/pywhisker_linux $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
 
 linux_responder:         ## Compiles Linux binaries for Responder.
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)

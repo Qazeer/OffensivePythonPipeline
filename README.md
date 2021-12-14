@@ -5,15 +5,19 @@ offensive tools:
 
 | Tool | Operating System(s) | Binary output(s) |
 |------|------------------|---------------|
+| [Certipy](https://github.com/ly4k/Certipy) | Linux / Windows x64 | `certipy_linux` <br/> `certipy_windows.exe`  |
 | [CrackMapExec](https://github.com/byt3bl33d3r/CrackMapExec) | Linux / Windows x64 | `crackmapexec_linux` <br/> `crackmapexec_windows.exe`  |
 | [dirkjanm's CVE-2020-1472 (ZeroLogon)](https://github.com/dirkjanm/CVE-2020-1472) | Linux / Windows x64 | `cve-2020-1472-exploit_linux` <br/> `restorepassword_linux` <br/><br/> `cve-2020-1472-exploit_windows.exe` <br/> `restorepassword_windows.exe` |
 | [cube0x0's CVE-2021-1675 (PrintNightmare)](https://github.com/cube0x0/CVE-2021-1675) | Linux / Windows x64 | `CVE-2021-1675_linux` <br/> `CVE-2021-1675_windows.exe` |
 | [enum4linux-ng](https://github.com/cddmp/enum4linux-ng) | Linux x64 (with the `samba tools` installed) | `enum4linuxng_linux` |
 | [impacket](https://github.com/SecureAuthCorp/impacket) | Linux / Windows x64 | Current (as of 2021-07-11) impacket's examples scripts |
+| [gMSADumper](https://github.com/micahvandeusen/gMSADumper) | Linux / Windows x64 | `gMSADumper_linux` <br/> `gMSADumper_windows.exe`  |
 | [ItWasAllADream](https://github.com/byt3bl33d3r/ItWasAllADream) | Linux / Windows x64 | `ItWasAllADream_linux` <br/> `ItWasAllADream_windows.exe` |
 | [LaZagne](https://github.com/AlessandroZ/LaZagne) | Linux / Windows x64 | `lazagne_linux` <br/> `lazagne_windows.exe` |
 | [lsassy](https://github.com/Hackndo/lsassy) | Linux / Windows x64 | `lsassy_linux` <br/> `lsassy_windows.exe` |
+| [Pachine (CVE-2021-42278)](https://github.com/ly4k/Pachine) | Linux / Windows x64 | `pachine_linux` <br/> `pachine_windows.exe` |
 | [pypykatz](https://github.com/skelsec/pypykatz) | Linux / Windows x64 | `pypykatz_linux` <br/> `pypykatz_windows.exe` |
+| [pywhisker](https://github.com/ShutdownRepo/pywhisker) | Linux / Windows x64 | `pywhisker_linux` <br/> `pywhisker_windows.exe` |
 | [Responder](https://github.com/lgandx/Responder) | Linux x64 (experimental) | `Responder_linux` <br/> `MultiRelay_linux` |
 | [SMBMap](https://github.com/ShawnDEvans/smbmap) | Linux x64 | `smbmap_linux` |
 
@@ -79,20 +83,32 @@ make help
 all:                      Compiles all binaries for both Windows and Linux.
 
 windows:                  Compiles all Windows binaries.
+windows_certipy:          Compiles Windows binary for ly4k's Certipy.
 windows_crackmapexec:     Compiles Windows binary for byt3bl33d3r's CrackMapExec.
+windows_gmsadumper:       Compiles Windows binary for micahvandeusen's gMSADumper.
 windows_impacket:         Compiles Windows binaries for SecureAuthCorp's impacket examples.
+windows_itwasalladream:   Compiles Windows binary for byt3bl33d3r's ItWasAllADream.
+windows_lazagne:          Compiles Windows binary for AlessandroZ's LaZagne.
 windows_lsassy:           Compiles Windows binary for Hackndo's lsassy.
+windows_pachine:          Compiles Windows binary for ly4k's Pachine.
 windows_printnightmare:   Compiles Windows binary for cube0x0's CVE-2021-1675.
 windows_pypykatz:         Compiles Windows binary for skelsec's pypykatz.
+windows_pywhisker:        Compiles Windows binary for ShutdownRepo's pywhisker.
 windows_zerologon:        Compiles Windows binaries for dirkjanm's CVE-2020-1472.
 
 linux:                    Compiles all Linux binaries.
+linux_certipy:            Compiles Linux binary for ly4k's Certipy.
 linux_crackmapexec:       Compiles Linux binary for byt3bl33d3r's CrackMapExec.
-linux_enum4linuxng:       Compiles Linux binary for cddmp's enum4linux-ng.
+linux_gmsadumper:         Compiles Linux binary for micahvandeusen's gMSADumper.
+linux_enum4linuxng:       !! Still depends on nmblookup / net / rpcclient / smbclient !! Compiles Linux binary for cddmp's enum4linux-ng.
 linux_impacket:           Compiles Linux binaries for SecureAuthCorp's impacket examples.
+linux_itwasalladream:     Compiles Linux binary for byt3bl33d3r's ItWasAllADream.
+linux_lazagne:            Compiles Linux binary for AlessandroZ's LaZagne.
 linux_lsassy:             Compiles Linux binary for Hackndo's lsassy.
+linux_pachine:            Compiles Linux binary for ly4k's Pachine.
 linux_printnightmare:     Compiles Linux binary for cube0x0's CVE-2021-1675.
 linux_pypykatz:           Compiles Linux binary for skelsec's pypykatz.
+linux_pywhisker:          Compiles Linux binary for ShutdownRepo's pywhisker.
 linux_responder:          Compiles Linux binaries for Responder.
 linux_smbmap:             Compiles Linux binary for ShawnDEvans' smbmap.
 linux_zerologon:          Compiles Linux binaries for dirkjanm's CVE-2020-1472.
@@ -152,3 +168,5 @@ please feel free to open an issue.
   - [Responder-Windows](https://github.com/lgandx/Responder-Windows)
   - [patator](https://github.com/lanjelot/patator)
   - [sqlmap](https://github.com/sqlmapproject/sqlmap)
+  - [WebclientServiceScanner](https://github.com/Hackndo/WebclientServiceScanner)
+  - [RDPassSpray](https://github.com/xFreed0m/RDPassSpray)
