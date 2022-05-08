@@ -9,6 +9,7 @@ offensive tools:
 | [CrackMapExec](https://github.com/byt3bl33d3r/CrackMapExec) | Linux / Windows x64 | `crackmapexec_linux` <br/> `crackmapexec_windows.exe`  |
 | [dirkjanm's CVE-2020-1472 (ZeroLogon)](https://github.com/dirkjanm/CVE-2020-1472) | Linux / Windows x64 | `cve-2020-1472-exploit_linux` <br/> `restorepassword_linux` <br/><br/> `cve-2020-1472-exploit_windows.exe` <br/> `restorepassword_windows.exe` |
 | [cube0x0's CVE-2021-1675 (PrintNightmare)](https://github.com/cube0x0/CVE-2021-1675) | Linux / Windows x64 | `CVE-2021-1675_linux` <br/> `CVE-2021-1675_windows.exe` |
+| [Ridter's noPac (CVE-2021-42278 and CVE-2021-42287)](https://github.com/Ridter/noPac) | Linux / Windows x64 | `noPac_scanner_linux` <br> `noPac_linux` <br><br> `noPac_scanner_windows.exe` <br> `noPac_windows.exe` |
 | [enum4linux-ng](https://github.com/cddmp/enum4linux-ng) | Linux x64 (with the `samba tools` installed) | `enum4linuxng_linux` |
 | [impacket](https://github.com/SecureAuthCorp/impacket) | Linux / Windows x64 | Current (as of 2021-07-11) impacket's examples scripts |
 | [gMSADumper](https://github.com/micahvandeusen/gMSADumper) | Linux / Windows x64 | `gMSADumper_linux` <br/> `gMSADumper_windows.exe`  |

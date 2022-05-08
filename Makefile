@@ -41,6 +41,7 @@ IMPACKET_URL="https://github.com/SecureAuthCorp/impacket/archive/master.zip"
 ITWASALLADREAM_URL="https://github.com/byt3bl33d3r/ItWasAllADream/archive/master.zip"
 LAZAGNE_URL="https://github.com/AlessandroZ/LaZagne/archive/master.zip"
 LSASSY_URL="https://github.com/Hackndo/lsassy/archive/master.zip"
+NOPAC_URL="https://github.com/Ridter/noPac/archive/main.zip"
 PACHINE_URL="https://github.com/ly4k/Pachine/archive/main.zip"
 PRINTNIGHTMARE_URL="https://github.com/cube0x0/CVE-2021-1675/archive/main.zip"
 PYPYKATZ_URL="https://github.com/skelsec/pypykatz/archive/master.zip"
@@ -118,7 +119,7 @@ all:                     ## Compiles all binaries for both Windows and Linux.
 all: windows linux
 
 windows:                 ## Compiles all Windows binaries.
-windows: _docker_switch_windows _docker_windows_create windows_crackmapexec windows_gmsadumper windows_lsassy windows_lazagne windows_zerologon windows_printnightmare windows_pachine windows_pywhisker windows_itwasalladream windows_pypykatz windows_impacket windows_certipy _docker_windows_rm
+windows: _docker_switch_windows _docker_windows_create windows_crackmapexec windows_gmsadumper windows_lsassy windows_lazagne windows_zerologon windows_printnightmare windows_pachine windows_pywhisker windows_itwasalladream windows_pypykatz windows_impacket windows_certipy windows_nopac _docker_windows_rm
 
 windows_certipy:         ## Compiles Windows binary for ly4k's Certipy.
 	@$(MAKE) -f $(THIS_FILE) _python_last_download _impacket_download
@@ -185,6 +186,15 @@ windows_lsassy:          ## Compiles Windows binary for Hackndo's lsassy.
 	@$(MAKE) -f $(THIS_FILE) _docker_windows_run
 	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)
 	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/lsassy_windows.exe $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
+
+windows_nopac:           ## Compiles Windows binary for Ridter's noPac.
+	@$(MAKE) -f $(THIS_FILE) _python_download _impacket_download
+	cp $(PROJECT_PATH_LINUX)/build_scripts/build_windows_nopac.ps1 $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_WINDOWS_ENTRYPOINT_FILE)
+	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/noPac.zip" ]; then wget -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/noPac.zip $(NOPAC_URL); fi
+	if [ ! -d "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/noPac" ]; then unzip -q $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/noPac.zip -d $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER) && mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/noPac-main $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/noPac; fi
+	@$(MAKE) -f $(THIS_FILE) _docker_windows_run
+	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)
+	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/noPac_*.exe $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
 
 windows_pachine:         ## Compiles Windows binary for ly4k's Pachine.
 	@$(MAKE) -f $(THIS_FILE) _python_download _impacket_download
@@ -259,7 +269,7 @@ windows_zerologon:       ## Compiles Windows binaries for dirkjanm's CVE-2020-14
 	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/restorepassword_windows.exe $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
 
 linux:                   ## Compiles all Linux binaries.
-linux: _docker_switch_linux _docker_linux_create linux_crackmapexec linux_gmsadumper linux_lsassy linux_lazagne linux_zerologon linux_pachine linux_printnightmare linux_pywhisker linux_itwasalladream linux_enum4linuxng linux_pypykatz linux_smbmap linux_responder linux_impacket linux_certipy _docker_linux_rm
+linux: _docker_switch_linux _docker_linux_create linux_crackmapexec linux_gmsadumper linux_lsassy linux_lazagne linux_zerologon linux_pachine linux_printnightmare linux_pywhisker linux_itwasalladream linux_enum4linuxng linux_pypykatz linux_smbmap linux_responder linux_impacket linux_certipy linux_nopac _docker_linux_rm
 
 linux_certipy:           ## Compiles Linux binary for ly4k's Certipy.
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
@@ -346,6 +356,17 @@ linux_lsassy:            ## Compiles Linux binary for Hackndo's lsassy.
 	@$(MAKE) -f $(THIS_FILE) _docker_linux_run
 	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)
 	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/lsassy_linux $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
+
+linux_nopac:             ## Compiles Linux binary for Ridter's noPac.
+	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
+	@$(MAKE) -f $(THIS_FILE) _impacket_download
+	cp $(PROJECT_PATH_LINUX)/build_scripts/build_linux_nopac.sh $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_LINUX_ENTRYPOINT_FILE)
+	chmod +x $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_LINUX_ENTRYPOINT_FILE)
+	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/noPac.zip" ]; then wget -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/noPac.zip $(NOPAC_URL); fi
+	if [ ! -d "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/noPac" ]; then unzip -q $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/noPac.zip -d $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER) && mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/noPac-main $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/noPac; fi
+	@$(MAKE) -f $(THIS_FILE) _docker_linux_run
+	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)
+	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/noPac_* $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
 
 linux_pachine:           ## Compiles Linux binary for ly4k's Pachine.
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
