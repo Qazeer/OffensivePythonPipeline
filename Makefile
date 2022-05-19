@@ -47,6 +47,7 @@ PRINTNIGHTMARE_URL="https://github.com/cube0x0/CVE-2021-1675/archive/main.zip"
 PYPYKATZ_URL="https://github.com/skelsec/pypykatz/archive/master.zip"
 PYWERVIEW_URL="https://github.com/the-useless-one/pywerview/archive/master.zip"
 RESPONDER_URL="https://github.com/lgandx/Responder/archive/master.zip"
+SMARTBRUTE_URL="https://github.com/ShutdownRepo/smartbrute/archive/main.zip"
 SMBMAP_URL="https://github.com/ShawnDEvans/smbmap/archive/master.zip"
 PYWHISKER_URL="https://github.com/ShutdownRepo/pywhisker/archive/main.zip"
 ZEROLOGON_URL="https://github.com/dirkjanm/CVE-2020-1472/archive/master.zip"
@@ -56,16 +57,16 @@ help:                    ## Show this help.
 
 _python_download:
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
-	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/python.exe" ]; then wget -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/python.exe $(PYTHON_INSTALLER_URL); fi 
+	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/python.exe" ]; then wget --no-check-certificate -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/python.exe $(PYTHON_INSTALLER_URL); fi
 
 _python_last_download:
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
-	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/python_last.exe" ]; then wget -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/python_last.exe $(PYTHON_INSTALLER_LAST_URL); fi 
+	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/python_last.exe" ]; then wget --no-check-certificate -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/python_last.exe $(PYTHON_INSTALLER_LAST_URL); fi
 
 _ms_cpp_redis_download:
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
-	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/VC_redist.x64.exe" ]; then wget -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/VC_redist.x64.exe $(MS_CPP_REDIS_x64_URL); fi 
-	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/VC_redist.x86.exe" ]; then wget -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/VC_redist.x86.exe $(MS_CPP_REDIS_x86_URL); fi 
+	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/VC_redist.x64.exe" ]; then wget -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/VC_redist.x64.exe $(MS_CPP_REDIS_x64_URL); fi
+	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/VC_redist.x86.exe" ]; then wget -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/VC_redist.x86.exe $(MS_CPP_REDIS_x86_URL); fi
 
 _impacket_download:
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
@@ -119,7 +120,7 @@ all:                     ## Compiles all binaries for both Windows and Linux.
 all: windows linux
 
 windows:                 ## Compiles all Windows binaries.
-windows: _docker_switch_windows _docker_windows_create windows_crackmapexec windows_gmsadumper windows_lsassy windows_lazagne windows_zerologon windows_printnightmare windows_pachine windows_pywhisker windows_itwasalladream windows_pypykatz windows_impacket windows_certipy windows_nopac _docker_windows_rm
+windows: _docker_switch_windows _docker_windows_create windows_crackmapexec windows_gmsadumper windows_lsassy windows_lazagne windows_zerologon windows_printnightmare windows_pachine windows_pywhisker windows_smartbrute windows_itwasalladream windows_pypykatz windows_impacket windows_certipy windows_nopac _docker_windows_rm
 
 windows_certipy:         ## Compiles Windows binary for ly4k's Certipy.
 	@$(MAKE) -f $(THIS_FILE) _python_last_download _impacket_download
@@ -224,7 +225,7 @@ windows_pypykatz:        ## Compiles Windows binary for skelsec's pypykatz.
 	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)
 	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/pypykatz_windows.exe $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
 
-windows_pywhisker:       ## Compiles Windows binary for ShutdownRepo's pywhisker.
+windows_pywhisker:       ## Compiles Windows binary for Shutdown's pywhisker.
 	@$(MAKE) -f $(THIS_FILE) _python_download _impacket_download
 	cp $(PROJECT_PATH_LINUX)/build_scripts/build_windows_pywhisker.ps1 $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_WINDOWS_ENTRYPOINT_FILE)
 	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/pywhisker.zip" ]; then wget -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/pywhisker.zip $(PYWHISKER_URL); fi
@@ -245,6 +246,16 @@ windows_responder:
 	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/Responder_windows.exe $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/Responder/
 	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/MultiRelay_windows.exe $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/Responder/
 	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/Responder.conf $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/Responder/
+
+windows_smartbrute:      ## Compiles Windows binaries for Shutdown's smartbrute.
+	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
+	@$(MAKE) -f $(THIS_FILE) _python_download _impacket_download
+	cp $(PROJECT_PATH_LINUX)/build_scripts/build_windows_smartbrute.ps1 $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_WINDOWS_ENTRYPOINT_FILE)
+	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/smartbrute.zip" ]; then wget -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/smartbrute.zip $(SMARTBRUTE_URL); fi
+	if [ ! -d "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/smartbrute" ]; then unzip -q $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/smartbrute.zip -d $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER) && mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/smartbrute-main $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/smartbrute; fi
+	@$(MAKE) -f $(THIS_FILE) _docker_windows_run
+	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)
+	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/smartbrute_windows.exe $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
 
 # ! Non-functionnal ! Compiles Windows binary for ShawnDEvans' smbmap.
 windows_smbmap:
@@ -269,7 +280,7 @@ windows_zerologon:       ## Compiles Windows binaries for dirkjanm's CVE-2020-14
 	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/restorepassword_windows.exe $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
 
 linux:                   ## Compiles all Linux binaries.
-linux: _docker_switch_linux _docker_linux_create linux_crackmapexec linux_gmsadumper linux_lsassy linux_lazagne linux_zerologon linux_pachine linux_printnightmare linux_pywhisker linux_itwasalladream linux_enum4linuxng linux_pypykatz linux_smbmap linux_responder linux_impacket linux_certipy linux_nopac _docker_linux_rm
+linux: _docker_switch_linux _docker_linux_create linux_crackmapexec linux_gmsadumper linux_lsassy linux_lazagne linux_zerologon linux_pachine linux_printnightmare linux_pywhisker linux_smartbrute linux_itwasalladream linux_enum4linuxng linux_pypykatz linux_smbmap linux_responder linux_impacket linux_certipy linux_nopac _docker_linux_rm
 
 linux_certipy:           ## Compiles Linux binary for ly4k's Certipy.
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
@@ -400,7 +411,7 @@ linux_pypykatz:          ## Compiles Linux binary for skelsec's pypykatz.
 	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)
 	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/pypykatz_linux $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
 
-linux_pywhisker:         ## Compiles Linux binary for ShutdownRepo's pywhisker.
+linux_pywhisker:         ## Compiles Linux binary for Shutdown's pywhisker.
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
 	@$(MAKE) -f $(THIS_FILE) _impacket_download
 	cp $(PROJECT_PATH_LINUX)/build_scripts/build_linux_pywhisker.sh $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_LINUX_ENTRYPOINT_FILE)
@@ -422,6 +433,16 @@ linux_responder:         ## Compiles Linux binaries for Responder.
 	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/Responder_linux $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/Responder/
 	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/MultiRelay_linux $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/Responder/
 	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/Responder.conf $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/Responder/
+
+linux_smartbrute:        ## Compiles Linux binaries for Shutdown's smartbrute.
+	@$(MAKE) -f $(THIS_FILE) _impacket_download
+	cp $(PROJECT_PATH_LINUX)/build_scripts/build_linux_smartbrute.sh $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_LINUX_ENTRYPOINT_FILE)
+	chmod +x $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/$(DOCKER_LINUX_ENTRYPOINT_FILE)
+	if [ ! -f "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/smartbrute.zip" ]; then wget -O $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/smartbrute.zip $(SMARTBRUTE_URL); fi
+	if [ ! -d "$(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/smartbrute" ]; then unzip -q $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/smartbrute.zip -d $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER) && mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/smartbrute-main $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/smartbrute; fi
+	@$(MAKE) -f $(THIS_FILE) _docker_linux_run
+	mkdir -p $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)
+	mv -f $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)/smartbrute_linux $(PROJECT_PATH_LINUX)/$(OUTPUT_FOLDER)/
 
 linux_smbmap:            ## Compiles Linux binary for ShawnDEvans' smbmap.
 	mkdir -p $(PROJECT_PATH_LINUX)/$(BUILD_FOLDER)
